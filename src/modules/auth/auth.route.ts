@@ -27,6 +27,11 @@ export const AuthRoutes = (app: Elysia) =>
       },
       {
         tags: ["Authentication"],
+        detail: {
+          summary: "User Login",
+          description:
+            "Authenticate a user with email and password. Returns access token and refresh token upon successful authentication.",
+        },
         body: AuthModel.loginBody,
         response: {
           200: ResponseSuccess(AuthModel.loginResponse),
@@ -57,6 +62,11 @@ export const AuthRoutes = (app: Elysia) =>
       },
       {
         tags: ["Authentication"],
+        detail: {
+          summary: "User Registration",
+          description:
+            "Register a new user account. Creates a new user with the provided credentials and returns authentication tokens.",
+        },
         body: AuthModel.registerBody,
         response: {
           201: ResponseSuccess(AuthModel.registerResponse),
@@ -76,6 +86,11 @@ export const AuthRoutes = (app: Elysia) =>
       },
       {
         tags: ["Authentication"],
+        detail: {
+          summary: "Get Current User",
+          description:
+            "Retrieve the authenticated user's profile information. Requires a valid access token in the Authorization header.",
+        },
         response: {
           200: ResponseSuccess(AuthModel.meResponse),
           401: ResponseError,
@@ -107,6 +122,11 @@ export const AuthRoutes = (app: Elysia) =>
       },
       {
         tags: ["Authentication"],
+        detail: {
+          summary: "Refresh Access Token",
+          description:
+            "Generate a new access token using a valid refresh token. Use this endpoint when the access token has expired to obtain a new one without requiring the user to log in again.",
+        },
         body: AuthModel.refreshTokenBody,
         response: {
           200: ResponseSuccess(AuthModel.refreshTokenResponse),
@@ -143,6 +163,11 @@ export const AuthRoutes = (app: Elysia) =>
       },
       {
         tags: ["Authentication"],
+        detail: {
+          summary: "User Logout",
+          description:
+            "Log out the current user by invalidating their access token and refresh token. Requires authentication. After logout, both tokens will be revoked and cannot be used for further requests.",
+        },
         body: AuthModel.logoutBody,
         response: {
           200: ResponseSuccess(AuthModel.logoutResponse),
