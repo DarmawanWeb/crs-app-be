@@ -45,3 +45,6 @@ package-lock.json
 **/logs/
 volumes/
 drizzle/
+
+uploads/
+!uploads/.gitkeep

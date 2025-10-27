@@ -2,6 +2,7 @@ import { Elysia } from "elysia";
 import cors from "@elysiajs/cors";
 import { logger } from "./lib/logger";
 import { AuthRoutes } from "./modules/auth/auth.route";
+import { DocumentRoutes } from "./modules/document/document.route";
 import swagger from "@elysiajs/swagger";
 
 const app = new Elysia();
@@ -26,6 +27,7 @@ app.use(
 );
 
 app.use(AuthRoutes);
+app.use(DocumentRoutes);
 
 app.onError(({ code, error, set, request }) => {
   if (!set.status) set.status = 500;
