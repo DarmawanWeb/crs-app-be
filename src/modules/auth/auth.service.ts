@@ -167,6 +167,7 @@ export const AuthService = {
         };
       }
 
+      // Generate new tokens first
       const newAccessToken = generateToken({
         userId: result.payload.userId,
         email: result.payload.email,
@@ -177,6 +178,7 @@ export const AuthService = {
         email: result.payload.email,
       });
 
+      // Only invalidate old token after successfully generating new ones
       await AuthRepository.invalidateRefreshToken(
         refreshToken,
         result.payload.userId,
@@ -187,6 +189,61 @@ export const AuthService = {
           access_token: newAccessToken,
           refresh_token: newRefreshToken,
         },
+        statusCode: 200,
+      };
+    } catch {
+      return {
+        error: "An unexpected error occurred. Please try again later",
+        statusCode: 500,
+      };
+    }
+  },
+  logout: async (refreshToken: string, accessToken: string) => {
+    try {
+      const result = await verifyRefreshToken(refreshToken);
+
+      if (result.error) {
+        return {
+          error: result.error,
+          statusCode: 401,
+        };
+      }
+
+      if (!result.payload) {
+        return {
+          error: "Invalid refresh token",
+          statusCode: 401,
+        };
+      }
+
+      // Invalidate the refresh token (blacklist it)
+      const { error: refreshError } =
+        await AuthRepository.invalidateRefreshToken(
+          refreshToken,
+          result.payload.userId,
+        );
+
+      if (refreshError) {
+        return {
+          error: "Failed to logout. Please try again later",
+          statusCode: 500,
+        };
+      }
+
+      // Invalidate the access token too (blacklist it)
+      const { error: accessError } = await AuthRepository.invalidateAccessToken(
+        accessToken,
+        result.payload.userId,
+      );
+
+      if (accessError) {
+        return {
+          error: "Failed to logout. Please try again later",
+          statusCode: 500,
+        };
+      }
+
+      return {
         statusCode: 200,
       };
     } catch {

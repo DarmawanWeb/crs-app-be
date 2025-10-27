@@ -8,7 +8,7 @@ export type JwtPayload = {
 
 export function generateToken(payload: JwtPayload) {
   const secret = process.env.JWT_SECRET!;
-  const expiresIn: number = 60 * 10;
+  const expiresIn: number = 60 * 10; // 10 minutes
 
   const options: SignOptions = { expiresIn };
 
@@ -17,7 +17,7 @@ export function generateToken(payload: JwtPayload) {
 
 export function generateRefreshToken(payload: JwtPayload) {
   const secret = process.env.JWT_REFRESH_SECRET || process.env.JWT_SECRET!;
-  const expiresIn: number = 60 * 60 * 24 * 7;
+  const expiresIn: number = 60 * 60 * 24 * 7; // 7 days
 
   const options: SignOptions = { expiresIn };
 
@@ -31,6 +31,41 @@ export function verifyToken(token: string): {
   try {
     const secret = process.env.JWT_SECRET!;
     const payload = jwt.verify(token, secret) as JwtPayload;
+    return { payload };
+  } catch (error) {
+    if (error instanceof jwt.JsonWebTokenError) {
+      return { error: "Invalid token" };
+    }
+    if (error instanceof jwt.TokenExpiredError) {
+      return { error: "Token expired" };
+    }
+    if (error instanceof jwt.NotBeforeError) {
+      return { error: "Token not active" };
+    }
+    return { error: "Token verification failed" };
+  }
+}
+
+export async function verifyAccessToken(token: string): Promise<{
+  payload?: JwtPayload;
+  error?: string;
+}> {
+  try {
+    const secret = process.env.JWT_SECRET!;
+    const payload = jwt.verify(token, secret) as JwtPayload;
+
+    // Check if token is blacklisted
+    const { data: isBlacklisted, error: blacklistError } =
+      await AuthRepository.isTokenBlacklisted(token);
+
+    if (blacklistError) {
+      return { error: "Failed to verify token status" };
+    }
+
+    if (isBlacklisted) {
+      return { error: "Access token has been invalidated" };
+    }
+
     return { payload };
   } catch (error) {
     if (error instanceof jwt.JsonWebTokenError) {

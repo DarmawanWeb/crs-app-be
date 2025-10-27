@@ -38,9 +38,16 @@ export const AuthModel = {
     access_token: t.String(),
     refresh_token: t.String(),
   }),
+  logoutBody: t.Object({
+    refresh_token: t.String(),
+  }),
+  logoutResponse: t.Object({
+    message: t.String(),
+  }),
 } as const;
 
 export type loginBody = typeof AuthModel.loginBody.static;
 export type registerBody = typeof AuthModel.registerBody.static;
 export type registerResponse = typeof AuthModel.registerResponse.static;
 export type loginResponse = typeof AuthModel.loginResponse.static;
+export type logoutBody = typeof AuthModel.logoutBody.static;

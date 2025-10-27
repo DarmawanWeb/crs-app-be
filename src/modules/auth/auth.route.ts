@@ -116,21 +116,36 @@ export const AuthRoutes = (app: Elysia) =>
       },
     );
 
-    auth.use(authMiddleware).get(
+    auth.use(authMiddleware).post(
       "/logout",
-      async ({ user, set }) => {
-        set.status = 200;
+      async ({ body, headers, set }) => {
+        const authHeader = headers.authorization;
+        const accessToken = authHeader?.split(" ")[1] || "";
+
+        const { error, statusCode } = await AuthService.logout(
+          body.refresh_token,
+          accessToken,
+        );
+
+        if (error) {
+          set.status = statusCode || 500;
+          return {
+            success: false,
+            error: error,
+          };
+        }
+
+        set.status = statusCode || 200;
         return {
           success: true,
-          data: {
-            message: `User ${user?.email} logged out successfully`,
-          },
+          data: { message: "Logged out successfully" },
         };
       },
       {
         tags: ["Authentication"],
+        body: AuthModel.logoutBody,
         response: {
-          200: ResponseSuccess(AuthModel.meResponse),
+          200: ResponseSuccess(AuthModel.logoutResponse),
           401: ResponseError,
           500: ResponseError,
         },

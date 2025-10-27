@@ -1,4 +1,4 @@
-import { verifyToken } from "../lib/jwt";
+import { verifyAccessToken } from "../lib/jwt";
 import { AuthRepository } from "../modules/auth/auth.repository";
 import { Elysia } from "elysia";
 
@@ -14,12 +14,12 @@ export const authMiddleware = new Elysia()
     }
 
     const token = authHeader.split(" ")[1];
-    const { payload, error } = verifyToken(token);
+    const { payload, error } = await verifyAccessToken(token);
 
     if (error || !payload) {
       return {
         user: undefined,
-        error: "Invalid token",
+        error: error || "Invalid token",
       };
     }
 

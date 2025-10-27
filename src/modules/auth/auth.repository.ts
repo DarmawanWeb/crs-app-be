@@ -33,7 +33,25 @@ export const AuthRepository = {
       const tokenHash = createHash("sha256").update(token).digest("hex");
 
       const expiresAt = new Date();
-      expiresAt.setDate(expiresAt.getDate() + 7);
+      expiresAt.setDate(expiresAt.getDate() + 7); // Refresh token expires in 7 days
+
+      await db.insert(blacklisted_tokens).values({
+        token_hash: tokenHash,
+        user_id: userId,
+        expires_at: expiresAt,
+      });
+
+      return { error: null, data: true };
+    } catch {
+      return { error: "Failed to invalidate token" };
+    }
+  },
+  invalidateAccessToken: async (token: string, userId?: string) => {
+    try {
+      const tokenHash = createHash("sha256").update(token).digest("hex");
+
+      const expiresAt = new Date();
+      expiresAt.setMinutes(expiresAt.getMinutes() + 10); // Access token expires in 10 minutes
 
       await db.insert(blacklisted_tokens).values({
         token_hash: tokenHash,
