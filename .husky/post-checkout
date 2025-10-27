@@ -1,0 +1,5 @@
+if [ "$3" = "1" ]; then
+  if git diff-tree -r --name-only --no-commit-id HEAD@{1} HEAD | grep -E "(package\.json|bun\.lock)$"; then
+    bun install
+  fi
+fi
