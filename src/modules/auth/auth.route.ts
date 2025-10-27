@@ -116,5 +116,26 @@ export const AuthRoutes = (app: Elysia) =>
       },
     );
 
+    auth.use(authMiddleware).get(
+      "/logout",
+      async ({ user, set }) => {
+        set.status = 200;
+        return {
+          success: true,
+          data: {
+            message: `User ${user?.email} logged out successfully`,
+          },
+        };
+      },
+      {
+        tags: ["Authentication"],
+        response: {
+          200: ResponseSuccess(AuthModel.meResponse),
+          401: ResponseError,
+          500: ResponseError,
+        },
+      },
+    );
+
     return auth;
   });
