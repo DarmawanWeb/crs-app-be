@@ -18,7 +18,10 @@ export const AuthModel = {
   registerBody: t.Object({
     fullname: t.String(),
     email: t.String({ format: "email" }),
-    password: t.String(),
+    password: t.String({
+      minLength: 8,
+      description: "Password must be at least 8 characters long",
+    }),
   }),
   registerResponse: t.Object({
     id: t.String(),
