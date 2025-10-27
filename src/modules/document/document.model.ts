@@ -1,7 +1,6 @@
 import { t } from "elysia";
 
 export const DocumentModel = {
-  // Create with file upload
   createDocumentWithFileBody: t.Object({
     number: t.String({ minLength: 1 }),
     title: t.String({ minLength: 1 }),
@@ -10,7 +9,7 @@ export const DocumentModel = {
     discipline: t.String({ minLength: 1 }),
     wp: t.String({ minLength: 1 }),
     lookup: t.String({ minLength: 1 }),
-    file: t.File(), // File upload
+    file: t.File(),
   }),
 
   createDocumentBody: t.Object({
@@ -59,9 +58,6 @@ export const DocumentModel = {
   getAllDocumentsQuery: t.Object({
     page: t.Optional(t.String({ pattern: "^[0-9]+$" })),
     limit: t.Optional(t.String({ pattern: "^[0-9]+$" })),
-    search: t.Optional(t.String()),
-    project: t.Optional(t.String()),
-    discipline: t.Optional(t.String()),
   }),
 
   deleteDocumentResponse: t.Object({

@@ -1,4 +1,3 @@
-// src/modules/document/document.route.ts (Fixed - import t from elysia)
 import { Elysia, t } from "elysia";
 import { DocumentModel } from "./document.model";
 import {
@@ -12,7 +11,6 @@ import { requireAdmin } from "../../middleware/rbac.middleware";
 
 export const DocumentRoutes = (app: Elysia) =>
   app.group("/documents", (doc) => {
-    // GET /documents
     doc.use(authMiddleware).get(
       "/",
       async ({ query, set }) => {
@@ -51,7 +49,6 @@ export const DocumentRoutes = (app: Elysia) =>
       },
     );
 
-    // GET /documents/:number
     doc.use(authMiddleware).get(
       "/:number",
       async ({ params, set }) => {
@@ -91,7 +88,6 @@ export const DocumentRoutes = (app: Elysia) =>
       },
     );
 
-    // POST /documents/upload
     doc.use(requireAdmin()).post(
       "/upload",
       async ({ body, set }) => {
@@ -131,7 +127,6 @@ export const DocumentRoutes = (app: Elysia) =>
       },
     );
 
-    // POST /documents
     doc.use(requireAdmin()).post(
       "/",
       async ({ body, set }) => {
@@ -170,7 +165,6 @@ export const DocumentRoutes = (app: Elysia) =>
       },
     );
 
-    // PUT /documents/:number/upload
     doc.use(requireAdmin()).put(
       "/:number/upload",
       async ({ params, body, set }) => {
@@ -213,7 +207,6 @@ export const DocumentRoutes = (app: Elysia) =>
       },
     );
 
-    // PUT /documents/:number
     doc.use(requireAdmin()).put(
       "/:number",
       async ({ params, body, set }) => {
@@ -256,7 +249,6 @@ export const DocumentRoutes = (app: Elysia) =>
       },
     );
 
-    // DELETE /documents/:number
     doc.use(requireAdmin()).delete(
       "/:number",
       async ({ params, set }) => {

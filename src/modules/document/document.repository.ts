@@ -1,5 +1,4 @@
-// src/modules/document/document.repository.ts (Fixed)
-import { eq, and, or, ilike } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import { db } from "../../db/db";
 import { document } from "../../db/schema";
 import { CreateDocumentBody, UpdateDocumentBody } from "./document.model";
@@ -9,44 +8,13 @@ export const DocumentRepository = {
   getAllDocuments: async (params: {
     page?: string | number;
     limit?: string | number;
-    search?: string;
-    project?: string;
-    discipline?: string;
   }) => {
     try {
       const { page, limit } = parsePaginationParams(params);
-      const { search, project, discipline } = params;
-
-      // Build where conditions
-      const conditions = [];
-
-      if (search) {
-        conditions.push(
-          or(
-            ilike(document.number, `%${search}%`),
-            ilike(document.title, `%${search}%`),
-            ilike(document.lookup, `%${search}%`),
-          ),
-        );
-      }
-
-      if (project) {
-        conditions.push(eq(document.project, project));
-      }
-
-      if (discipline) {
-        conditions.push(eq(document.discipline, discipline));
-      }
-
-      const whereClause =
-        conditions.length > 0 ? and(...conditions) : undefined;
-
-      // Use paginate utility
       const result = await paginate({
         table: document,
         page,
         limit,
-        where: whereClause,
         orderBy: document.created_at,
       });
 

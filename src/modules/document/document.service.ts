@@ -1,4 +1,3 @@
-// src/modules/document/document.service.ts (Fixed)
 import { CreateDocumentBody, UpdateDocumentBody } from "./document.model";
 import { DocumentRepository } from "./document.repository";
 import {
@@ -29,13 +28,7 @@ type UpdateDocumentWithFileBody = {
 };
 
 export const DocumentService = {
-  getAllDocuments: async (params: {
-    page?: string;
-    limit?: string;
-    search?: string;
-    project?: string;
-    discipline?: string;
-  }) => {
+  getAllDocuments: async (params: { page?: string; limit?: string }) => {
     try {
       const { data, error } = await DocumentRepository.getAllDocuments(params);
 
