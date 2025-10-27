@@ -1,6 +1,7 @@
 import { Elysia } from "elysia";
 import cors from "@elysiajs/cors";
 import { logger } from "./lib/logger";
+import { AuthRoutes } from "./modules/auth/auth.route";
 import swagger from "@elysiajs/swagger";
 
 const app = new Elysia();
@@ -24,8 +25,16 @@ app.use(
   }),
 );
 
+app.use(AuthRoutes);
+
 app.onError(({ code, error, set, request }) => {
   if (!set.status) set.status = 500;
+
+  console.error("Error occurred:", {
+    code,
+    message: error instanceof Error ? error.message : error,
+    stack: error instanceof Error ? error.stack : null,
+  });
   switch (code) {
     case "VALIDATION": {
       set.status = 400;
